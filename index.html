@@ -1,0 +1,241 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Sistema de Gestión de Inventario</title>
+    <link rel="stylesheet" href="styles.css">
+    <script>
+        document.domain = 'localhost';
+    </script>
+</head>
+<body>
+<header>
+    <h1>Sistema de Gestión de Inventario</h1>
+</header>
+
+<nav>
+    <ul>
+        <li><button id="productsBtn" class="active">Productos</button></li>
+        <li><button id="providersBtn">Proveedores</button></li>
+        <li><button id="ordersBtn">Pedidos</button></li>
+        <li><button id="salesBtn">Ventas</button></li>
+        <li><button id="supplierOrdersBtn">Órdenes de Proveedor</button></li>
+    </ul>
+</nav>
+
+<div class="notification-panel">
+    <h2>Notificaciones en tiempo real</h2>
+    <div id="notificationsContainer">
+        <div id="stockNotifications" class="notification-section">
+            <h3>Stock</h3>
+            <div class="notifications-list" id="stockNotificationsList"></div>
+        </div>
+        <div id="orderNotifications" class="notification-section">
+            <h3>Órdenes</h3>
+            <div class="notifications-list" id="orderNotificationsList"></div>
+        </div>
+        <div id="cancelNotifications" class="notification-section">
+            <h3>Cancelaciones</h3>
+            <div class="notifications-list" id="cancelNotificationsList"></div>
+        </div>
+    </div>
+</div>
+
+<main>
+    <div id="productsSection" class="section active">
+        <h2>Gestión de Productos</h2>
+        <div class="actions">
+            <button id="newProductBtn">Nuevo Producto</button>
+            <input type="text" id="productSearch" placeholder="Buscar producto...">
+        </div>
+        <div id="productForm" class="form-container" style="display: none;">
+            <h3>Agregar Producto</h3>
+            <form id="addProductForm">
+                <input type="text" id="productName" placeholder="Nombre" required>
+                <textarea id="productDesc" placeholder="Descripción"></textarea>
+                <input type="number" id="productPrice" placeholder="Precio" required>
+                <input type="number" id="productStock" placeholder="Existencia" required>
+                <select id="productProvider" required>
+                    <option value="">Seleccione un proveedor</option>
+                </select>
+                <button type="submit">Guardar</button>
+                <button type="button" id="cancelProductBtn">Cancelar</button>
+            </form>
+        </div>
+        <table id="productsTable">
+            <thead>
+            <tr>
+                <th>ID</th>
+                <th>Nombre</th>
+                <th>Descripción</th>
+                <th>Precio</th>
+                <th>Existencia</th>
+                <th>Proveedor</th>
+                <th>Acciones</th>
+            </tr>
+            </thead>
+            <tbody id="productsTableBody"></tbody>
+        </table>
+    </div>
+
+    <div id="providersSection" class="section">
+        <h2>Gestión de Proveedores</h2>
+        <div class="actions">
+            <button id="newProviderBtn">Nuevo Proveedor</button>
+            <input type="text" id="providerSearch" placeholder="Buscar proveedor...">
+        </div>
+        <div id="providerForm" class="form-container" style="display: none;">
+            <h3>Agregar Proveedor</h3>
+            <form id="addProviderForm">
+                <input type="text" id="providerName" placeholder="Nombre" required>
+                <input type="text" id="providerAddress" placeholder="Dirección">
+                <input type="text" id="providerPhone" placeholder="Teléfono">
+                <input type="email" id="providerEmail" placeholder="Email">
+                <button type="submit">Guardar</button>
+                <button type="button" id="cancelProviderBtn">Cancelar</button>
+            </form>
+        </div>
+        <table id="providersTable">
+            <thead>
+            <tr>
+                <th>ID</th>
+                <th>Nombre</th>
+                <th>Dirección</th>
+                <th>Teléfono</th>
+                <th>Email</th>
+                <th>Acciones</th>
+            </tr>
+            </thead>
+            <tbody id="providersTableBody"></tbody>
+        </table>
+    </div>
+
+    <div id="ordersSection" class="section">
+        <h2>Gestión de Pedidos</h2>
+        <div class="actions">
+            <button id="newOrderBtn">Nuevo Pedido</button>
+        </div>
+        <div id="orderForm" class="form-container" style="display: none;">
+            <h3>Crear Pedido</h3>
+            <form id="addOrderForm">
+                <div id="orderProducts">
+                    <div class="order-product">
+                        <select class="product-select" required>
+                            <option value="">Seleccione un producto</option>
+                        </select>
+                        <input type="number" class="product-quantity" placeholder="Cantidad" required min="1">
+                        <button type="button" class="remove-product">X</button>
+                    </div>
+                </div>
+                <button type="button" id="addProductToOrder">+ Agregar producto</button>
+                <div class="total">Total: $<span id="orderTotal">0.00</span></div>
+                <button type="submit">Guardar pedido</button>
+                <button type="button" id="cancelOrderBtn">Cancelar</button>
+            </form>
+        </div>
+        <table id="ordersTable">
+            <thead>
+            <tr>
+                <th>ID</th>
+                <th>Fecha</th>
+                <th>Estado</th>
+                <th>Total</th>
+                <th>Acciones</th>
+            </tr>
+            </thead>
+            <tbody id="ordersTableBody"></tbody>
+        </table>
+    </div>
+
+    <div id="salesSection" class="section">
+        <h2>Gestión de Ventas</h2>
+        <div class="actions">
+            <button id="newSaleBtn">Nueva Venta</button>
+        </div>
+        <div id="saleForm" class="form-container" style="display: none;">
+            <h3>Crear Venta</h3>
+            <form id="addSaleForm">
+                <div id="saleProducts">
+                    <div class="sale-product">
+                        <select class="product-select" required>
+                            <option value="">Seleccione un producto</option>
+                        </select>
+                        <input type="number" class="product-quantity" placeholder="Cantidad" required min="1">
+                        <button type="button" class="remove-product">X</button>
+                    </div>
+                </div>
+                <button type="button" id="addProductToSale">+ Agregar producto</button>
+                <div class="total">Total: $<span id="saleTotal">0.00</span></div>
+                <button type="submit">Guardar venta</button>
+                <button type="button" id="cancelSaleBtn">Cancelar</button>
+            </form>
+        </div>
+        <table id="salesTable">
+            <thead>
+            <tr>
+                <th>ID</th>
+                <th>Fecha</th>
+                <th>Estado</th>
+                <th>Total</th>
+                <th>Acciones</th>
+            </tr>
+            </thead>
+            <tbody id="salesTableBody"></tbody>
+        </table>
+    </div>
+
+    <div id="supplierOrdersSection" class="section">
+        <h2>Gestión de Órdenes de Proveedor</h2>
+        <div class="actions">
+            <button id="newSupplierOrderBtn">Nueva Orden</button>
+        </div>
+        <div id="supplierOrderForm" class="form-container" style="display: none;">
+            <h3>Crear Orden de Proveedor</h3>
+            <form id="addSupplierOrderForm">
+                <select id="orderProvider" required>
+                    <option value="">Seleccione un proveedor</option>
+                </select>
+                <div id="orderSupplierProducts">
+                    <div class="supplier-order-product">
+                        <select class="product-select" required>
+                            <option value="">Seleccione un producto</option>
+                        </select>
+                        <input type="number" class="product-quantity" placeholder="Cantidad" required min="1">
+                        <input type="number" class="product-price" placeholder="Precio unitario" required min="0">
+                        <button type="button" class="remove-product">X</button>
+                    </div>
+                </div>
+                <button type="button" id="addProductToSupplierOrder">+ Agregar producto</button>
+                <div class="total">Total: $<span id="supplierOrderTotal">0.00</span></div>
+                <button type="submit">Guardar orden</button>
+                <button type="button" id="cancelSupplierOrderBtn">Cancelar</button>
+            </form>
+        </div>
+        <table id="supplierOrdersTable">
+            <thead>
+            <tr>
+                <th>ID</th>
+                <th>Proveedor</th>
+                <th>Fecha</th>
+                <th>Estado</th>
+                <th>Total</th>
+                <th>Acciones</th>
+            </tr>
+            </thead>
+            <tbody id="supplierOrdersTableBody"></tbody>
+        </table>
+    </div>
+</main>
+
+<div id="modal" class="modal">
+    <div class="modal-content">
+        <span class="close">&times;</span>
+        <h3 id="modalTitle"></h3>
+        <div id="modalContent"></div>
+    </div>
+</div>
+
+<script src="app.js"></script>
+</body>
+</html>
